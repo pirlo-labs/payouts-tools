@@ -1,4 +1,4 @@
-namespace: submilli
+namespace: pirlo-labs
 provides:
 - name: melio.com/accounts.create
   description: Create a fictional payee account.
@@ -117,7 +117,7 @@ provides:
     firm:
       type: string
 - name: melio.com/entities.update
-  description: Update a fictional entity.
+  description: Update a fictional entity name.
   fields:
     entity:
       type: string

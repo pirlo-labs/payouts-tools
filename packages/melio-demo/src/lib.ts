@@ -348,9 +348,10 @@ export function createAccount(input: AccountInput): Account {
     const name = requiredText(input.name, "name");
     const routingLast4 = requiredText(input.routingLast4, "routingLast4");
     const accountLast4 = requiredText(input.accountLast4, "accountLast4");
-    const firm = input.firm === undefined ? foundEntity.firm : requiredText(input.firm, "firm");
+    const rawFirm = input.firm;
+    const firm = rawFirm === undefined ? foundEntity.firm : requiredText(rawFirm, "firm");
     check("melio.com/accounts.create", { firm: firm, entity: entityId, operation: "accounts.create", rail: rail });
-    const created: Account = { id: "acct_demo_" + nextAccount, entity: entityId, firm: firm, name: name, rail: rail, routingLast4: routingLast4, accountLast4: accountLast4, createdThisSession: true };
+    const created: Account = { id: "acct_demo_" + String(nextAccount), entity: entityId, firm: firm, name: name, rail: rail, routingLast4: routingLast4, accountLast4: accountLast4, createdThisSession: true };
     nextAccount = nextAccount + 1;
     accounts.push(created);
     return copyAccount(created);
@@ -366,9 +367,12 @@ export function createAccount(input: AccountInput): Account {
 export function updateAccount(accountId: string, fields: AccountUpdate): Account {
     const id = requiredText(accountId, "payeeAccountId");
     const found = requireAccount(id);
-    const routing = fields.routingLast4 === undefined ? found.routingLast4 : requiredText(fields.routingLast4, "routingLast4");
-    const accountNumberLast4 = fields.accountLast4 === undefined ? found.accountLast4 : requiredText(fields.accountLast4, "accountLast4");
-    const name = fields.name === undefined ? found.name : requiredText(fields.name, "name");
+    const rawRouting = fields.routingLast4;
+    const rawAccountLast4 = fields.accountLast4;
+    const rawName = fields.name;
+    const routing = rawRouting === undefined ? found.routingLast4 : requiredText(rawRouting, "routingLast4");
+    const accountNumberLast4 = rawAccountLast4 === undefined ? found.accountLast4 : requiredText(rawAccountLast4, "accountLast4");
+    const name = rawName === undefined ? found.name : requiredText(rawName, "name");
     const changed = routing !== found.routingLast4 || accountNumberLast4 !== found.accountLast4;
     check("melio.com/accounts.update", { firm: found.firm, entity: found.entity, operation: "accounts.update", payeeAccountId: id, isBankDetailChange: changed });
     found.routingLast4 = routing;
@@ -461,12 +465,14 @@ export function createPayment(input: PaymentInput): Payment {
     const amount = cents(input.amount, "amount");
     const rail = requireRail(input.rail);
     const externalId = requiredText(input.externalId, "externalId");
-    const currency = input.currency === undefined ? "USD" : requiredText(input.currency, "currency");
-    const firm = input.firm === undefined ? foundEntity.firm : requiredText(input.firm, "firm");
+    const rawCurrency = input.currency;
+    const currency = rawCurrency === undefined ? "USD" : requiredText(rawCurrency, "currency");
+    const rawFirm = input.firm;
+    const firm = rawFirm === undefined ? foundEntity.firm : requiredText(rawFirm, "firm");
     const alreadyPaid = hasOpenOrCompletedPayment(entityId, externalId);
     check("melio.com/payments.create", { firm: firm, entity: entityId, operation: "payments.create", amount: amount, currency: currency, rail: rail, payeeAccountId: payeeAccountId, payeeCreatedThisSession: payee.createdThisSession, externalId: externalId, alreadyPaid: alreadyPaid });
     if (alreadyPaid) throw new Error("invoice already paid");
-    const created: Payment = { id: "pay_demo_" + nextPayment, entity: entityId, firm: firm, payeeAccountId: payeeAccountId, externalId: externalId, amount: amount, currency: currency, rail: rail, status: "scheduled" };
+    const created: Payment = { id: "pay_demo_" + String(nextPayment), entity: entityId, firm: firm, payeeAccountId: payeeAccountId, externalId: externalId, amount: amount, currency: currency, rail: rail, status: "scheduled" };
     nextPayment = nextPayment + 1;
     payments.push(created);
     markBillPaid(entityId, externalId);
@@ -620,9 +626,11 @@ export function getInboxMessage(messageId: string): InboxMessage | null {
 export function replaceBeneficialOwners(entityId: string, names: string[]): BeneficialOwners {
     const id = requiredText(entityId, "entity");
     const found = requireEntity(id);
-    if (names.length === 0) throw new Error("names must not be empty");
+    const supplied: string[] = [];
+    for (const name of names) supplied.push(name);
+    if (supplied.length === 0) throw new Error("names must not be empty");
     const copied: string[] = [];
-    for (const name of names) copied.push(requiredText(name, "name"));
+    for (const name of supplied) copied.push(requiredText(name, "name"));
     check("melio.com/beneficial-owners.replace", { firm: found.firm, entity: id, operation: "beneficial-owners.replace" });
     const stored = findOwners(id);
     if (stored === undefined) beneficialOwners.push({ entity: id, names: copied });
@@ -690,15 +698,18 @@ export function getPaymentRun(paymentRunId: string): PaymentRun | null {
  */
 export function createPaymentRun(input: PaymentRunInput): PaymentRun {
     const rail = requireRail(input.rail);
-    const currency = input.currency === undefined ? "USD" : requiredText(input.currency, "currency");
-    if (input.settlementIds.length === 0) throw new Error("settlementIds must not be empty");
+    const rawCurrency = input.currency;
+    const currency = rawCurrency === undefined ? "USD" : requiredText(rawCurrency, "currency");
+    const rawSettlementIds = input.settlementIds;
     const ids: string[] = [];
-    for (const raw of input.settlementIds) ids.push(requiredText(raw, "settlementId"));
+    for (const raw of rawSettlementIds) ids.push(requiredText(raw, "settlementId"));
+    if (ids.length === 0) throw new Error("settlementIds must not be empty");
     const tallied = tallySettlements(ids);
-    const amount = input.amount === undefined ? tallied.amount : cents(input.amount, "amount");
-    if (input.amount !== undefined && amount !== tallied.amount) throw new Error("amount does not match the settlement total");
+    const rawAmount = input.amount;
+    const amount = rawAmount === undefined ? tallied.amount : cents(rawAmount, "amount");
+    if (rawAmount !== undefined && amount !== tallied.amount) throw new Error("amount does not match the settlement total");
     check("melio.com/payment-runs.create", { operation: "payment-runs.create", amount: amount, currency: currency, rail: rail, itemCount: ids.length, unreconciledCount: tallied.unreconciledCount, hasHeldItems: tallied.hasHeldItems, alreadyReleased: false });
-    const created = runOf("run_demo_" + nextRun, amount, rail, ids, "ready", false);
+    const created = runOf("run_demo_" + String(nextRun), amount, rail, ids, "ready", false);
     created.currency = currency;
     nextRun = nextRun + 1;
     paymentRuns.push(created);
@@ -823,7 +834,7 @@ export function applyPayeeChange(caseId: string): Account {
     check("melio.com/payee-changes.apply", { entity: found.entity, operation: "payee-changes.apply", caseId: id, caseStatus: found.status, payeeAccountId: payeeAccountId, payeeCreatedThisSession: createdThisSession, reviewed: found.reviewed });
     if (found.proposedRoutingLast4 === null || found.proposedAccountLast4 === null) throw new Error("case has no proposed bank details");
     if (existing === undefined) {
-        const created: Account = { id: "acct_demo_" + nextAccount, entity: found.entity, firm: firmFor(found.entity), name: requireEntity(found.entity).name, rail: "standard-ach", routingLast4: found.proposedRoutingLast4, accountLast4: found.proposedAccountLast4, createdThisSession: true };
+        const created: Account = { id: "acct_demo_" + String(nextAccount), entity: found.entity, firm: firmFor(found.entity), name: requireEntity(found.entity).name, rail: "standard-ach", routingLast4: found.proposedRoutingLast4, accountLast4: found.proposedAccountLast4, createdThisSession: true };
         nextAccount = nextAccount + 1;
         accounts.push(created);
         found.payeeAccountId = created.id;
@@ -861,14 +872,16 @@ export function placeHold(input: HoldInput): Hold {
     requireEntity(entityId);
     const amount = cents(input.amount, "amount");
     const reason = requiredText(input.reason, "reason");
-    const currency = input.currency === undefined ? "USD" : requiredText(input.currency, "currency");
-    const settlementId = input.settlementId === undefined ? null : requiredText(input.settlementId, "settlementId");
+    const rawCurrency = input.currency;
+    const currency = rawCurrency === undefined ? "USD" : requiredText(rawCurrency, "currency");
+    const rawSettlementId = input.settlementId;
+    const settlementId = rawSettlementId === undefined ? null : requiredText(rawSettlementId, "settlementId");
     if (settlementId !== null) {
         const settlement = requireSettlement(settlementId);
         if (settlement.entity !== entityId) throw new Error("settlement does not belong to entity");
     }
     check("melio.com/holds.place", { entity: entityId, operation: "holds.place", amount: amount, currency: currency, holdReason: reason });
-    const created: Hold = { id: "hold_demo_" + nextHold, entity: entityId, amount: amount, currency: currency, reason: reason, settlementId: settlementId, status: "open" };
+    const created: Hold = { id: "hold_demo_" + String(nextHold), entity: entityId, amount: amount, currency: currency, reason: reason, settlementId: settlementId, status: "open" };
     nextHold = nextHold + 1;
     holds.push(created);
     if (settlementId !== null) {
@@ -944,7 +957,7 @@ export function createRefund(paymentId: string, amount: number, currency?: strin
     check("melio.com/refunds.create", { entity: payment.entity, operation: "refunds.create", amount: value, currency: code, alreadyRefunded: alreadyRefunded, paymentId: id });
     if (alreadyRefunded) throw new Error("payment already refunded");
     if (roundMoney(refundedTotal(id) + value) > payment.amount) throw new Error("amount exceeds the remaining refundable amount");
-    const created: Refund = { id: "ref_demo_" + nextRefund, entity: payment.entity, paymentId: id, amount: value, currency: code, status: "completed" };
+    const created: Refund = { id: "ref_demo_" + String(nextRefund), entity: payment.entity, paymentId: id, amount: value, currency: code, status: "completed" };
     nextRefund = nextRefund + 1;
     refunds.push(created);
     return copyRefund(created);

@@ -1,0 +1,6 @@
+[[package]]
+name = "@pirlo-labs/melio-demo"
+version = "0.1.0"
+description = "Demo data: fictional Melio fixtures for offline agent and policy demonstrations."
+keywords = ["melio", "demo", "fixtures", "payouts", "payments"]
+path = "packages/melio-demo"

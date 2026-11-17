@@ -1,0 +1,447 @@
+namespace: submilli
+provides:
+- name: melio.com/accounts.create
+  description: Create a fictional payee account.
+  fields:
+    entity:
+      type: string
+    firm:
+      type: string
+    operation:
+      type: string
+    rail:
+      type: string
+- name: melio.com/accounts.delete
+  description: Delete a fictional payee account.
+  fields:
+    entity:
+      type: string
+    firm:
+      type: string
+    operation:
+      type: string
+    payeeAccountId:
+      type: string
+- name: melio.com/accounts.get
+  description: Get a fictional payee account.
+  fields:
+    entity:
+      type: string
+    firm:
+      type: string
+    payeeAccountId:
+      type: string
+- name: melio.com/accounts.list
+  description: List fictional payee accounts.
+  fields:
+    entity:
+      type: string
+    firm:
+      type: string
+- name: melio.com/accounts.update
+  description: Update a fictional payee account's bank details.
+  fields:
+    entity:
+      type: string
+    firm:
+      type: string
+    isBankDetailChange:
+      type: boolean
+    operation:
+      type: string
+    payeeAccountId:
+      type: string
+- name: melio.com/bank-activity.list
+  description: List fictional bank activity.
+  fields: {}
+- name: melio.com/beneficial-owners.replace
+  description: Replace fictional beneficial owners.
+  fields:
+    entity:
+      type: string
+    firm:
+      type: string
+    operation:
+      type: string
+- name: melio.com/bills.get
+  description: Get a fictional bill.
+  fields:
+    entity:
+      type: string
+    externalId:
+      type: string
+    firm:
+      type: string
+- name: melio.com/bills.list
+  description: List fictional bills.
+  fields:
+    entity:
+      type: string
+    firm:
+      type: string
+- name: melio.com/cases.get
+  description: Get a fictional operations case.
+  fields:
+    caseId:
+      type: string
+    caseStatus:
+      type: string
+    entity:
+      type: string
+- name: melio.com/cases.list
+  description: List fictional operations cases.
+  fields:
+    entity:
+      type: string
+- name: melio.com/cases.review
+  description: Mark a fictional operations case reviewed.
+  fields:
+    caseId:
+      type: string
+    caseStatus:
+      type: string
+    entity:
+      type: string
+    operation:
+      type: string
+- name: melio.com/entities.get
+  description: Get a fictional entity.
+  fields:
+    entity:
+      type: string
+    firm:
+      type: string
+- name: melio.com/entities.list
+  description: List fictional entities.
+  fields:
+    firm:
+      type: string
+- name: melio.com/entities.update
+  description: Update a fictional entity.
+  fields:
+    entity:
+      type: string
+    firm:
+      type: string
+    operation:
+      type: string
+- name: melio.com/exceptions.get
+  description: Get a fictional operations exception.
+  fields:
+    entity:
+      type: string
+    exceptionId:
+      type: string
+- name: melio.com/exceptions.list
+  description: List fictional operations exceptions.
+  fields:
+    entity:
+      type: string
+- name: melio.com/holds.list
+  description: List fictional fraud holds.
+  fields:
+    entity:
+      type: string
+- name: melio.com/holds.place
+  description: Place a fictional fraud hold.
+  fields:
+    amount:
+      type: number
+    currency:
+      type: string
+    entity:
+      type: string
+    holdReason:
+      type: string
+    operation:
+      type: string
+- name: melio.com/holds.release
+  description: Release a fictional fraud hold.
+  fields:
+    amount:
+      type: number
+    currency:
+      type: string
+    entity:
+      type: string
+    holdId:
+      type: string
+    holdReason:
+      type: string
+    operation:
+      type: string
+- name: melio.com/inbox.get
+  description: Get a fictional inbox message.
+  fields:
+    entity:
+      type: string
+    firm:
+      type: string
+    messageId:
+      type: string
+- name: melio.com/inbox.list
+  description: List fictional inbox messages.
+  fields:
+    entity:
+      type: string
+    firm:
+      type: string
+- name: melio.com/limitations.get
+  description: Get fictional payout limitations for an entity.
+  fields:
+    entity:
+      type: string
+    firm:
+      type: string
+- name: melio.com/limits.get
+  description: Get a fictional daily payout limit.
+  fields:
+    entity:
+      type: string
+- name: melio.com/limits.update
+  description: Update a fictional daily payout limit.
+  fields:
+    currency:
+      type: string
+    currentLimit:
+      type: number
+    entity:
+      type: string
+    operation:
+      type: string
+    requestedLimit:
+      type: number
+    withinTwoX:
+      type: boolean
+- name: melio.com/payee-changes.apply
+  description: Apply a fictional payee bank-detail change.
+  fields:
+    caseId:
+      type: string
+    caseStatus:
+      type: string
+    entity:
+      type: string
+    operation:
+      type: string
+    payeeAccountId:
+      type: string
+    payeeCreatedThisSession:
+      type: boolean
+    reviewed:
+      type: boolean
+- name: melio.com/payment-runs.create
+  description: Create a fictional payment run.
+  fields:
+    alreadyReleased:
+      type: boolean
+    amount:
+      type: number
+    currency:
+      type: string
+    hasHeldItems:
+      type: boolean
+    itemCount:
+      type: number
+    operation:
+      type: string
+    rail:
+      type: string
+    unreconciledCount:
+      type: number
+- name: melio.com/payment-runs.get
+  description: Get a fictional payment run.
+  fields:
+    paymentRunId:
+      type: string
+- name: melio.com/payment-runs.list
+  description: List fictional payment runs.
+  fields: {}
+- name: melio.com/payment-runs.release
+  description: Release a fictional payment run.
+  fields:
+    alreadyReleased:
+      type: boolean
+    amount:
+      type: number
+    currency:
+      type: string
+    hasHeldItems:
+      type: boolean
+    itemCount:
+      type: number
+    operation:
+      type: string
+    paymentRunId:
+      type: string
+    rail:
+      type: string
+    unreconciledCount:
+      type: number
+- name: melio.com/payments.cancel
+  description: Cancel a fictional scheduled payment.
+  fields:
+    amount:
+      type: number
+    currency:
+      type: string
+    entity:
+      type: string
+    firm:
+      type: string
+    operation:
+      type: string
+    paymentId:
+      type: string
+    status:
+      type: string
+- name: melio.com/payments.create
+  description: Create a fictional payment.
+  fields:
+    alreadyPaid:
+      type: boolean
+    amount:
+      type: number
+    currency:
+      type: string
+    entity:
+      type: string
+    externalId:
+      type: string
+    firm:
+      type: string
+    operation:
+      type: string
+    payeeAccountId:
+      type: string
+    payeeCreatedThisSession:
+      type: boolean
+    rail:
+      type: string
+- name: melio.com/payments.get
+  description: Get a fictional payment.
+  fields:
+    entity:
+      type: string
+    firm:
+      type: string
+    paymentId:
+      type: string
+- name: melio.com/payments.list
+  description: List fictional payments.
+  fields:
+    entity:
+      type: string
+    firm:
+      type: string
+- name: melio.com/payments.update
+  description: Update a fictional scheduled payment.
+  fields:
+    amount:
+      type: number
+    currency:
+      type: string
+    entity:
+      type: string
+    firm:
+      type: string
+    operation:
+      type: string
+    paymentId:
+      type: string
+    rail:
+      type: string
+    status:
+      type: string
+- name: melio.com/reconciliation.match
+  description: Match a fictional settlement to bank activity.
+  fields:
+    amount:
+      type: number
+    currency:
+      type: string
+    forceMatch:
+      type: boolean
+    operation:
+      type: string
+    settlementId:
+      type: string
+- name: melio.com/refunds.create
+  description: Create a fictional refund.
+  fields:
+    alreadyRefunded:
+      type: boolean
+    amount:
+      type: number
+    currency:
+      type: string
+    entity:
+      type: string
+    operation:
+      type: string
+    paymentId:
+      type: string
+- name: melio.com/refunds.get
+  description: Get a fictional refund.
+  fields:
+    entity:
+      type: string
+    refundId:
+      type: string
+- name: melio.com/refunds.list
+  description: List fictional refunds.
+  fields:
+    entity:
+      type: string
+- name: melio.com/settlements.get
+  description: Get a fictional settlement.
+  fields:
+    entity:
+      type: string
+    settlementId:
+      type: string
+- name: melio.com/settlements.list
+  description: List fictional settlements.
+  fields:
+    entity:
+      type: string
+- name: melio.com/tools.eta
+  description: Get a fictional payment ETA.
+  fields:
+    amount:
+      type: number
+    currency:
+      type: string
+    entity:
+      type: string
+    firm:
+      type: string
+    rail:
+      type: string
+- name: melio.com/tools.fast-eligibility
+  description: Check fictional fast-rail eligibility.
+  fields:
+    amount:
+      type: number
+    currency:
+      type: string
+    entity:
+      type: string
+    firm:
+      type: string
+    rail:
+      type: string
+- name: melio.com/tools.fee
+  description: Get a fictional payment fee quote.
+  fields:
+    amount:
+      type: number
+    currency:
+      type: string
+    entity:
+      type: string
+    firm:
+      type: string
+    rail:
+      type: string
+requires: []
